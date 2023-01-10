@@ -22,7 +22,7 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
   try {
-    const token = jwt.sign({ _id: req.user._id }, process.env.JWT_SECRET, { expiresIn: '7 days' })
+    const token = jwt.sign({ _id: req.user._id }, process.env.JWT_SECRET, { expiresIn: '1 day' })
     req.user.tokens.push(token)
     await req.user.save()
     res.status(200).json({
@@ -54,7 +54,7 @@ export const logout = async (req, res) => {
 export const extend = async (req, res) => {
   try {
     const idx = req.user.tokens.findIndex(token => token === req.token)
-    const token = jwt.sign({ _id: req.user._id }, process.env.JWT_SECRET, { expiresIn: '7 days' })
+    const token = jwt.sign({ _id: req.user._id }, process.env.JWT_SECRET, { expiresIn: '1 day' })
     req.user.tokens[idx] = token
     await req.user.save()
     res.status(200).json({ success: true, message: '', result: token })

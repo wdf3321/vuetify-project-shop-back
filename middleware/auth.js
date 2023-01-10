@@ -7,9 +7,13 @@ export const login = (req, res, next) => {
   // { session: false } 停用 cookie
   passport.authenticate('login', { session: false }, (error, user, info) => {
     if (error || !user) {
-      // POST 進來的資料少了 usernameField 或 passwordField 時
-      if (info.message === 'Missing credentials') info.message = '欄位錯誤'
-      return res.status(401).json({ success: false, message: info.message || error.message })
+      if (info) {
+        // POST 進來的資料少了 usernameField 或 passwordField 時
+        if (info.message === 'Missing credentials') info.message = '欄位錯誤'
+        return res.status(401).json({ success: false, message: info.message || error.message })
+      } else {
+        return res.status(500).json({ success: false, message: '未知錯誤' })
+      }
     }
     // 把查詢到的 user 放進 req 裡給後面的 controller 用
     req.user = user
@@ -29,7 +33,7 @@ export const jwt = (req, res, next) => {
           return res.status(401).json({ success: false, message: 'JWT 錯誤' })
         }
       } else {
-        return res.status(401).json({ success: false, message: info.message || error.message })
+        return res.status(401).json({ success: false, message: info.message || '未知錯誤' })
       }
     }
     req.user = data.user
